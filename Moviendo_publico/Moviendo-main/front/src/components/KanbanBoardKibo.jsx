@@ -1,22 +1,34 @@
-import { useState, useEffect, useRef } from 'react';
 import {
-  KanbanProvider,
   KanbanBoard,
-  KanbanHeader,
-  KanbanCards,
   KanbanCard,
-} from '@/components/kibo-ui/kanban';
-import { Star, Film, Tv, Eye } from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
-import { STATUS_LABELS } from '../constants/status';
+  KanbanCards,
+  KanbanHeader,
+  KanbanProvider,
+} from "@/components/kibo-ui/kanban";
+import { Badge } from "@/components/ui/badge";
+import { Eye, Film, Star, Tv } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { STATUS_LABELS } from "../constants/status";
 
 const KanbanBoardKibo = ({ obras, onUpdateStatus, onCardClick }) => {
   const [kanbanData, setKanbanData] = useState([]);
 
   const columns = [
-    { id: 'QUERO_ASSISTIR', name: STATUS_LABELS.QUERO_ASSISTIR, color: 'from-blue-600 to-blue-800' },
-    { id: 'ASSISTINDO', name: STATUS_LABELS.ASSISTINDO, color: 'from-yellow-600 to-yellow-800' },
-    { id: 'ASSISTIDO', name: STATUS_LABELS.ASSISTIDO, color: 'from-purple-600 to-purple-800' },
+    {
+      id: "quero_assistir",
+      name: STATUS_LABELS.quero_assistir,
+      color: "from-blue-600 to-blue-800",
+    },
+    {
+      id: "assistindo",
+      name: STATUS_LABELS.assistindo,
+      color: "from-yellow-600 to-yellow-800",
+    },
+    {
+      id: "assistido",
+      name: STATUS_LABELS.assistido,
+      color: "from-purple-600 to-purple-800",
+    },
   ];
 
   useEffect(() => {
@@ -45,14 +57,12 @@ const KanbanBoardKibo = ({ obras, onUpdateStatus, onCardClick }) => {
             if (deltaX < 5 && deltaY < 5) {
               onCardClick(obra);
             }
-            document.removeEventListener('pointerup', handlePointerUp);
+            document.removeEventListener("pointerup", handlePointerUp);
           };
-          document.addEventListener('pointerup', handlePointerUp);
+          document.addEventListener("pointerup", handlePointerUp);
         }}
       >
-        <div 
-          className="flex items-center gap-3 cursor-pointer bg-gray-800/80 backdrop-blur-sm rounded-lg p-3 border border-gray-700 hover:border-purple-500 transition-all duration-200 shadow-md"
-        >
+        <div className="flex items-center gap-3 cursor-pointer bg-gray-800/80 backdrop-blur-sm rounded-lg p-3 border border-gray-700 hover:border-purple-500 transition-all duration-200 shadow-md">
           <div className="w-12 h-16 bg-gray-900 rounded overflow-hidden flex-shrink-0">
             {obra.urlCapa ? (
               <img
@@ -63,7 +73,7 @@ const KanbanBoardKibo = ({ obras, onUpdateStatus, onCardClick }) => {
               />
             ) : (
               <div className="w-full h-full flex items-center justify-center">
-                {obra.tipo === 'SERIE' ? (
+                {obra.tipo === "serie" ? (
                   <Tv className="w-6 h-6 text-gray-600" />
                 ) : (
                   <Film className="w-6 h-6 text-gray-600" />
@@ -81,19 +91,21 @@ const KanbanBoardKibo = ({ obras, onUpdateStatus, onCardClick }) => {
               {obra.notaPessoal && (
                 <div className="flex items-center gap-1">
                   <Star className="w-3 h-3 text-yellow-500 fill-yellow-500" />
-                  <span className="text-yellow-500 font-medium">{obra.notaPessoal.toFixed(2)}</span>
+                  <span className="text-yellow-500 font-medium">
+                    {obra.notaPessoal.toFixed(2)}
+                  </span>
                 </div>
               )}
             </div>
           </div>
 
           <div className="flx-shrink-0 flex items-center gap-2">
-            {obra.tipo === 'SERIE' ? (
+            {obra.tipo === "serie" ? (
               <Tv className="w-4 h-4 text-purple-400" />
             ) : (
               <Film className="w-4 h-4 text-purple-400" />
             )}
-            
+
             <button
               onMouseDown={(e) => {
                 e.stopPropagation();
@@ -116,26 +128,30 @@ const KanbanBoardKibo = ({ obras, onUpdateStatus, onCardClick }) => {
   const targetColumnRef = useRef(null);
 
   const handleDragStart = (event) => {
-    const draggedItem = kanbanData.find(item => item.id === event.active.id.toString());
+    const draggedItem = kanbanData.find(
+      (item) => item.id === event.active.id.toString()
+    );
     draggedItemRef.current = draggedItem;
     originalColumnRef.current = draggedItem?.column;
   };
 
   const handleDragOver = (event) => {
     if (!event.over) return;
-    
+
     let targetColumn = null;
-    
-    const isColumn = columns.find(col => col.id === event.over.id);
+
+    const isColumn = columns.find((col) => col.id === event.over.id);
     if (isColumn) {
       targetColumn = event.over.id;
     } else {
-      const overItem = kanbanData.find(item => item.id === event.over.id.toString());
+      const overItem = kanbanData.find(
+        (item) => item.id === event.over.id.toString()
+      );
       if (overItem) {
         targetColumn = overItem.column;
       }
     }
-    
+
     if (targetColumn) {
       targetColumnRef.current = targetColumn;
     }
@@ -145,7 +161,7 @@ const KanbanBoardKibo = ({ obras, onUpdateStatus, onCardClick }) => {
     const draggedItem = draggedItemRef.current;
     const originalColumn = originalColumnRef.current;
     const targetColumn = targetColumnRef.current;
-    
+
     if (!draggedItem) {
       return;
     }
@@ -153,7 +169,7 @@ const KanbanBoardKibo = ({ obras, onUpdateStatus, onCardClick }) => {
     if (targetColumn && originalColumn !== targetColumn) {
       onUpdateStatus(parseInt(draggedItem.id), targetColumn);
     }
-    
+
     draggedItemRef.current = null;
     originalColumnRef.current = null;
     targetColumnRef.current = null;
@@ -169,11 +185,19 @@ const KanbanBoardKibo = ({ obras, onUpdateStatus, onCardClick }) => {
       className="w-full"
     >
       {(column) => {
-        const columnObras = kanbanData.filter(item => item.column === column.id);
-        
+        const columnObras = kanbanData.filter(
+          (item) => item.column === column.id
+        );
+
         return (
-          <KanbanBoard key={column.id} id={column.id} className="bg-gray-900/50 border-gray-800">
-            <KanbanHeader className={`bg-gradient-to-r ${column.color} text-white p-4 flex items-center justify-between`}>
+          <KanbanBoard
+            key={column.id}
+            id={column.id}
+            className="bg-gray-900/50 border-gray-800"
+          >
+            <KanbanHeader
+              className={`bg-gradient-to-r ${column.color} text-white p-4 flex items-center justify-between`}
+            >
               <span className="font-semibold text-lg">{column.name}</span>
               <Badge variant="secondary" className="bg-white/20 text-white">
                 {columnObras.length}

@@ -16,38 +16,23 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from rest_framework.routers import DefaultRouter
-from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView
-
-from core.views import (
-    DiretorViewSet, GeneroViewSet, PlataformaViewSet, 
-    TagViewSet, ObraViewSet, AvaliacaoViewSet, ListaViewSet
-)
-
-# Configuração do Router (Gera as URLs da API automaticamente)
-router = DefaultRouter()
-router.register(r'diretores', DiretorViewSet)
-router.register(r'generos', GeneroViewSet)
-router.register(r'plataformas', PlataformaViewSet)
-router.register(r'tags', TagViewSet)
-router.register(r'obras', ObraViewSet)
-router.register(r'avaliacoes', AvaliacaoViewSet)
-router.register(r'listas', ListaViewSet)
+from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 
 urlpatterns = [
     # Painel Administrativo do Django
     path('admin/', admin.site.urls),
     
-    # Rotas da API (inclui todas as registradas no router acima)
-    path('api/', include(router.urls)),
+    # API URLs
+    path('api/', include('apps.diretores.urls')),
+    path('api/', include('apps.generos.urls')),
+    path('api/', include('apps.plataformas.urls')),
+    path('api/', include('apps.tags.urls')),
+    path('api/', include('apps.obras.urls')),
+    path('api/', include('apps.avaliacoes.urls')),
+    path('api/', include('apps.listas.urls')),
     
-    # --- Rotas da Documentação (Swagger/OpenAPI) ---
-    # Gera o arquivo de esquema (YAML) necessário para a documentação
+    # Swagger/OpenAPI URLs
     path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
-    
-    # Interface gráfica Swagger UI (Igual ao Java/SpringDoc)
     path('api/docs/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
     
-    # Interface alternativa de documentação (Redoc)
-    path('api/redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
 ]
