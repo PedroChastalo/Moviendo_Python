@@ -98,7 +98,6 @@ const Lists = () => {
 
         {listas.length === 0 ? (
           <div className="text-center py-20">
-            <Film className="w-20 h-20 text-gray-600 mx-auto mb-4" />
             <h3 className="text-xl font-semibold text-gray-400 mb-2">
               Nenhuma lista criada ainda
             </h3>
@@ -154,9 +153,6 @@ const Lists = () => {
                       {lista.descricao}
                     </p>
                   )}
-                  <div className="flex items-center gap-2 text-sm text-gray-500">
-                    <Film className="w-4 h-4" />
-                  </div>
                 </CardContent>
               </Card>
             ))}

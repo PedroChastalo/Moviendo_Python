@@ -63,7 +63,6 @@ class Obra(models.Model):
         verbose_name="Temporada Atual"
     )
     
-    onde_assistir = models.CharField(max_length=255, null=True, blank=True, verbose_name="Onde Assistir")
     comentario = models.TextField(max_length=2000, null=True, blank=True, verbose_name="Comentário")
     
     diretores = models.ManyToManyField(Diretor, related_name='obras', blank=True)

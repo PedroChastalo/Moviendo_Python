@@ -37,11 +37,9 @@ const ObraModal = ({ isOpen, onClose, obra = null, onSuccess }) => {
     anoLancamento: "",
     duracaoMinutos: "",
     urlCapa: "",
-    // valores internos alinhados com o backend
     tipo: "filme",
     status: "quero_assistir",
     notaImdb: "",
-    ondeAssistir: "",
     temporadaAtual: "",
     episodioAtual: "",
     totalTemporadas: "",
@@ -112,7 +110,6 @@ const ObraModal = ({ isOpen, onClose, obra = null, onSuccess }) => {
       tipo: obraData.tipo || "filme",
       status: obraData.status || "quero_assistir",
       notaImdb: obraData.notaImdb || "",
-      ondeAssistir: obraData.ondeAssistir || "",
       temporadaAtual: obraData.temporadaAtual || "",
       episodioAtual: obraData.episodioAtual || "",
       totalTemporadas: obraData.totalTemporadas || "",
@@ -135,7 +132,6 @@ const ObraModal = ({ isOpen, onClose, obra = null, onSuccess }) => {
       tipo: "filme",
       status: "quero_assistir",
       notaImdb: "",
-      ondeAssistir: "",
       temporadaAtual: "",
       episodioAtual: "",
       totalTemporadas: "",
@@ -284,7 +280,6 @@ const ObraModal = ({ isOpen, onClose, obra = null, onSuccess }) => {
       anoLancamento: tmdbData.anoLancamento || "",
       duracaoMinutos: tmdbData.duracaoMinutos || "",
       urlCapa: tmdbData.urlCapa || "",
-      // tmdbData.tipo já vem como 'filme' | 'serie' do mapeamento
       tipo: tmdbData.tipo || "filme",
       notaImdb: tmdbData.notaImdb || "",
       totalTemporadas: tmdbData.totalTemporadas || "",
@@ -349,7 +344,6 @@ const ObraModal = ({ isOpen, onClose, obra = null, onSuccess }) => {
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Informações Básicas */}
           <div className="space-y-4">
             <h3 className="text-lg font-semibold text-white border-b border-gray-800 pb-2">
               Informações Básicas
@@ -465,7 +459,6 @@ const ObraModal = ({ isOpen, onClose, obra = null, onSuccess }) => {
                 />
               </div>
 
-              {/* Diretores */}
               <div className="col-span-2 space-y-4">
                 <div className="flex items-center justify-between border-b border-gray-800 pb-2">
                   <h3 className="text-lg font-semibold text-white">
@@ -560,25 +553,9 @@ const ObraModal = ({ isOpen, onClose, obra = null, onSuccess }) => {
                   placeholder="8.5"
                 />
               </div>
-
-              <div>
-                <Label htmlFor="ondeAssistir" className="text-white">
-                  Onde Assistir
-                </Label>
-                <Input
-                  id="ondeAssistir"
-                  value={formData.ondeAssistir}
-                  onChange={(e) =>
-                    setFormData({ ...formData, ondeAssistir: e.target.value })
-                  }
-                  className="bg-gray-800 border-gray-700 text-white"
-                  placeholder="Netflix, Prime Video..."
-                />
-              </div>
             </div>
           </div>
 
-          {/* Campos específicos para séries */}
           {formData.tipo === "serie" && (
             <div className="space-y-4">
               <h3 className="text-lg font-semibold text-white border-b border-gray-800 pb-2">
@@ -664,7 +641,6 @@ const ObraModal = ({ isOpen, onClose, obra = null, onSuccess }) => {
             </div>
           )}
 
-          {/* Gêneros */}
           <div className="space-y-4">
             <div className="flex items-center justify-between border-b border-gray-800 pb-2">
               <h3 className="text-lg font-semibold text-white">Gêneros</h3>
@@ -703,7 +679,6 @@ const ObraModal = ({ isOpen, onClose, obra = null, onSuccess }) => {
             </div>
           </div>
 
-          {/* Plataformas */}
           <div className="space-y-4">
             <div className="flex items-center justify-between border-b border-gray-800 pb-2">
               <h3 className="text-lg font-semibold text-white">Plataformas</h3>
@@ -744,7 +719,6 @@ const ObraModal = ({ isOpen, onClose, obra = null, onSuccess }) => {
             </div>
           </div>
 
-          {/* Tags */}
           <div className="space-y-4">
             <div className="flex items-center justify-between border-b border-gray-800 pb-2">
               <h3 className="text-lg font-semibold text-white">Tags</h3>
@@ -779,7 +753,6 @@ const ObraModal = ({ isOpen, onClose, obra = null, onSuccess }) => {
             </div>
           </div>
 
-          {/* Buttons */}
           <div className="flex justify-end gap-3 pt-4 border-t border-gray-800">
             <Button
               type="button"

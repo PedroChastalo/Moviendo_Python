@@ -42,3 +42,24 @@ class ObraViewSet(viewsets.ModelViewSet):
             ObraSerializer(obra).data,
             status=status.HTTP_201_CREATED
         )
+
+    @action(detail=False, methods=['get'])
+    def get_tmdb_details(self, request):
+        tmdb_id = request.query_params.get('tmdb_id')
+        tipo = request.query_params.get('tipo')
+        
+        if not tmdb_id or not tipo:
+            return Response(
+                {"erro": "Parâmetros 'tmdb_id' e 'tipo' são obrigatórios"}, 
+                status=status.HTTP_400_BAD_REQUEST
+            )
+            
+        try:
+            detalhes = self.tmdb_client.get_detalhes(tmdb_id, tipo)
+            return Response(detalhes)
+        except Exception as e:
+            return Response(
+                {"erro": str(e)}, 
+                status=status.HTTP_400_BAD_REQUEST
+            )
+

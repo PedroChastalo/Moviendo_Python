@@ -1,20 +1,20 @@
 import { Button } from "@/components/ui/button";
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import {
-  Calendar,
-  Check,
-  Film,
-  Loader2,
-  Plus,
-  Search,
-  Star,
-  Tv,
+    Calendar,
+    Check,
+    Film,
+    Loader2,
+    Plus,
+    Search,
+    Star,
+    Tv,
 } from "lucide-react";
 import { useState } from "react";
 import toast from "react-hot-toast";
@@ -57,15 +57,21 @@ const TmdbSearchModal = ({
 
   const handleSelectItem = async (item) => {
     setSelectedItem(item.id);
-    // Já recebemos dados suficientes da busca para exibir o painel de detalhes,
-    // então usamos diretamente o item retornado pela API.
-    setSelectedDetails({
-      ...item,
-      mediaType: item.mediaType,
-    });
-    setResults([]);
-    setQuery("");
-    setSelectedItem(null);
+    try {
+      const details = await tmdbService.getDetails(item.id, item.mediaType);
+      
+      setSelectedDetails({
+        ...details,
+        mediaType: item.mediaType,
+      });
+    } catch (error) {
+      console.error("Erro ao buscar detalhes:", error);
+      toast.error("Erro ao carregar detalhes da obra");
+    } finally {
+      setResults([]);
+      setQuery("");
+      setSelectedItem(null);
+    }
   };
 
   const handleConfirmImport = () => {
@@ -88,7 +94,6 @@ const TmdbSearchModal = ({
           ? details.episodeRunTime[0]
           : null,
       urlCapa: tmdbService.buildPosterUrl(details.posterPath, "w500"),
-      // valores internos esperados pelo backend: 'filme' | 'serie'
       tipo: details.mediaType === "movie" ? "filme" : "serie",
       notaImdb: details.voteAverage
         ? parseFloat(details.voteAverage.toFixed(1))

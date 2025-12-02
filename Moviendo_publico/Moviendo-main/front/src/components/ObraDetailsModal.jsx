@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
@@ -124,6 +125,9 @@ const ObraDetailsModal = ({
                 )}
                 {obra.titulo}
               </DialogTitle>
+              <DialogDescription className="text-gray-400">
+                Detalhes da obra {obra.titulo}
+              </DialogDescription>
               <div className="flex gap-2">
                 {onEdit && (
                   <Button
@@ -264,11 +268,7 @@ const ObraDetailsModal = ({
                     <Label className="text-white mb-3 block">Sua Nota</Label>
                     <div className="flex items-center gap-4">
                       <Rating
-                        value={
-                          avaliacao?.nota
-                            ? Math.round(parseFloat(avaliacao.nota))
-                            : 0
-                        }
+                        value={avaliacao?.nota}
                         onValueChange={(value) =>
                           setAvaliacao((prev) => ({
                             ...prev,
@@ -286,9 +286,7 @@ const ObraDetailsModal = ({
                         ))}
                       </Rating>
                       <span className="text-2xl font-bold text-white min-w-[60px]">
-                        {avaliacao?.nota
-                          ? parseFloat(avaliacao.nota).toFixed(0)
-                          : "0"}
+                        {avaliacao?.nota}
                         /10
                       </span>
                     </div>

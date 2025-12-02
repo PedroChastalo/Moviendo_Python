@@ -8,7 +8,7 @@ RA: 2576759
 
 ---
 
-## 🚀 Configuração Rápida
+## Configuração Rápida
 
 ### Primeira vez (PC zerado)
 
@@ -17,31 +17,13 @@ RA: 2576759
 git clone <url-do-repositorio>
 cd Moviendo-main
 
-# Execute o script de configuração automática
-./setup.sh
-```
-
-### Execução diária
-
-```bash
-# Rodar ambos os servidores (backend + frontend)
-./run-dev.sh
-```
-
-## 📋 Pré-requisitos
+## Pré-requisitos
 
 - **Python 3.8+** - [Download](https://python.org)
 - **Node.js 16+** - [Download](https://nodejs.org)
 - **PostgreSQL** - [Download](https://postgresql.org)
 
-## 🌐 URLs do Sistema
-
-- **Frontend**: http://localhost:5173
-- **Backend API**: http://localhost:8000
-- **Documentação API**: http://localhost:8000/api/docs/
-- **Painel Admin**: http://localhost:8000/admin/
-
-## 🛠️ Comandos Manuais
+## Comandos Manuais
 
 ### Backend Django
 
@@ -57,16 +39,6 @@ python manage.py runserver
 cd front
 npm run dev
 ```
-
-## 📚 Funcionalidades
-
-- ✅ Cadastro de filmes e séries
-- ✅ Integração com TMDB para importar dados
-- ✅ Sistema de avaliações
-- ✅ Criação de listas personalizadas
-- ✅ Gerenciamento de diretores, gêneros e plataformas
-- ✅ API REST completa
-- ✅ Interface moderna e responsiva
 
 ## 🔧 Tecnologias
 

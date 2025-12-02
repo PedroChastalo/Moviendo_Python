@@ -1,36 +1,15 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { BarChart3, TrendingUp, Film, Star, Clock, Calendar, Award, FileDown } from 'lucide-react';
+import { BarChart3, TrendingUp, Film, Star, Clock, Calendar, Award } from 'lucide-react';
 import obrasService from '../services/obrasService';
 import avaliacoesService from '../services/avaliacoesService';
-import reportsService from '../services/reportsService';
 import toast from 'react-hot-toast';
 
 const Estatisticas = () => {
   const [obras, setObras] = useState([]);
   const [avaliacoes, setAvaliacoes] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [downloading, setDownloading] = useState(false);
 
-  const handleDownloadRelatorio = async (tipo) => {
-    setDownloading(true);
-    try {
-      if (tipo === 'obras') {
-        await reportsService.downloadRelatorioObras();
-        toast.success('Relatório de obras baixado!');
-      } else if (tipo === 'genero') {
-        await reportsService.downloadRelatorioPorGenero();
-        toast.success('Relatório por gênero baixado!');
-      } else if (tipo === 'estatisticas') {
-        await reportsService.downloadRelatorioEstatisticas();
-        toast.success('Relatório de estatísticas baixado!');
-      }
-    } catch (error) {
-      toast.error('Erro ao baixar relatório');
-    } finally {
-      setDownloading(false);
-    }
-  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -190,32 +169,6 @@ const Estatisticas = () => {
                 Estatísticas
               </h1>
               <p className="text-gray-400">Análise completa da sua coleção de obras</p>
-            </div>
-            <div className="flex gap-2">
-              <button
-                onClick={() => handleDownloadRelatorio('obras')}
-                disabled={downloading}
-                className="flex items-center gap-2 px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors disabled:opacity-50"
-              >
-                <FileDown className="w-4 h-4" />
-                Relatório Obras
-              </button>
-              <button
-                onClick={() => handleDownloadRelatorio('genero')}
-                disabled={downloading}
-                className="flex items-center gap-2 px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors disabled:opacity-50"
-              >
-                <FileDown className="w-4 h-4" />
-                Por Gênero
-              </button>
-              <button
-                onClick={() => handleDownloadRelatorio('estatisticas')}
-                disabled={downloading}
-                className="flex items-center gap-2 px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors disabled:opacity-50"
-              >
-                <FileDown className="w-4 h-4" />
-                Estatísticas
-              </button>
             </div>
           </div>
         </div>

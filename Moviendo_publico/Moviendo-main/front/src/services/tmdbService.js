@@ -8,6 +8,13 @@ const tmdbService = {
     return response.data;
   },
 
+  getDetails: async (tmdbId, type) => {
+    const response = await api.get("/obras/get_tmdb_details/", {
+      params: { tmdb_id: tmdbId, tipo: type },
+    });
+    return response.data;
+  },
+
   importMovie: async (tmdbId) => {
     const response = await api.post("/obras/importar_tmdb/", {
       tmdb_id: tmdbId,

@@ -79,7 +79,7 @@ const ListaModal = ({ isOpen, onClose, lista, onSuccess }) => {
         <form onSubmit={handleSubmit} className="space-y-6 mt-4">
           <div className="space-y-2">
             <Label htmlFor="nome" className="text-white">
-              Nome da Lista *
+              Nome da Lista 
             </Label>
             <Input
               id="nome"

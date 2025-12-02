@@ -1,12 +1,12 @@
-import { useState, useEffect, useCallback } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { Plus, Search, X, Film, Tv } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Film, Plus, Search, Tv, X } from 'lucide-react';
+import { useCallback, useEffect, useState } from 'react';
+import toast from 'react-hot-toast';
 import listasService from '../services/listasService';
 import obrasService from '../services/obrasService';
-import toast from 'react-hot-toast';
 import ConfirmModal from './ConfirmModal';
 
 const ListaObrasModal = ({ isOpen, onClose, lista }) => {
@@ -27,7 +27,7 @@ const ListaObrasModal = ({ isOpen, onClose, lista }) => {
   const loadListaObras = useCallback(async () => {
     try {
       const data = await listasService.getById(lista.id);
-      setObras(data.obras || []);
+      setObras(data.obrasInfo || []);
     } catch (error) {
       console.error('Erro ao carregar obras da lista:', error);
       toast.error('Erro ao carregar obras da lista');
@@ -59,7 +59,6 @@ const ListaObrasModal = ({ isOpen, onClose, lista }) => {
 
   const handleRemoveObra = async () => {
     if (!obraToRemove) return;
-
     setLoading(true);
     try {
       await listasService.removeObra(lista.id, obraToRemove.id);
@@ -88,6 +87,9 @@ const ListaObrasModal = ({ isOpen, onClose, lista }) => {
           <DialogTitle className="text-2xl font-bold text-white">
             {lista.nome}
           </DialogTitle>
+          <DialogDescription className="text-gray-400">
+            Gerencie as obras desta lista
+          </DialogDescription>
           {lista.descricao && (
             <p className="text-gray-400 text-sm mt-2">{lista.descricao}</p>
           )}
@@ -127,11 +129,6 @@ const ListaObrasModal = ({ isOpen, onClose, lista }) => {
                       className="flex items-center justify-between p-3 bg-gray-800/50 rounded-lg hover:bg-gray-800 transition-colors"
                     >
                       <div className="flex items-center gap-3">
-                        {obra.tipo === 'FILME' ? (
-                          <Film className="w-5 h-5 text-purple-400" />
-                        ) : (
-                          <Tv className="w-5 h-5 text-purple-400" />
-                        )}
                         <div>
                           <p className="text-white font-medium">{obra.titulo}</p>
                           {obra.anoLancamento && (
