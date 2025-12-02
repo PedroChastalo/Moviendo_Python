@@ -2,12 +2,13 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
-import { Film, Plus, Search, Tv, X } from 'lucide-react';
+import { Film, Plus, Search, Shuffle, Tv, X } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import listasService from '../services/listasService';
 import obrasService from '../services/obrasService';
 import ConfirmModal from './ConfirmModal';
+import ObraDetailsModal from './ObraDetailsModal';
 
 const ListaObrasModal = ({ isOpen, onClose, lista }) => {
   const [obras, setObras] = useState([]);
@@ -16,6 +17,7 @@ const ListaObrasModal = ({ isOpen, onClose, lista }) => {
   const [loading, setLoading] = useState(false);
   const [showAddObras, setShowAddObras] = useState(false);
   const [obraToRemove, setObraToRemove] = useState(null);
+  const [selectedRandomObra, setSelectedRandomObra] = useState(null);
 
   useEffect(() => {
     if (isOpen && lista) {
@@ -73,6 +75,15 @@ const ListaObrasModal = ({ isOpen, onClose, lista }) => {
     }
   };
 
+  const handleRandomObra = () => {
+    if (obras.length === 0) {
+      toast.error('Adicione obras à lista primeiro!');
+      return;
+    }
+    const randomIndex = Math.floor(Math.random() * obras.length);
+    setSelectedRandomObra(obras[randomIndex]);
+  };
+
   const obrasDisponiveis = todasObras.filter(
     obra => !obras.some(o => o.id === obra.id) &&
             obra.titulo.toLowerCase().includes(searchTerm.toLowerCase())
@@ -97,13 +108,25 @@ const ListaObrasModal = ({ isOpen, onClose, lista }) => {
 
         <div className="space-y-6 mt-6">
           <div className="flex justify-between items-center">
-            <Button
-              onClick={() => setShowAddObras(!showAddObras)}
-              className="bg-purple-600 hover:bg-purple-700 text-white"
-            >
-              <Plus className="w-4 h-4 mr-2" />
-              Adicionar Obras
-            </Button>
+            <div className="flex gap-2">
+              <Button
+                onClick={() => setShowAddObras(!showAddObras)}
+                className="bg-purple-600 hover:bg-purple-700 text-white"
+              >
+                <Plus className="w-4 h-4 mr-2" />
+                Adicionar Obras
+              </Button>
+              {obras.length > 0 && (
+                <Button
+                  onClick={handleRandomObra}
+                  variant="outline"
+                  className="border-purple-500 text-purple-400 hover:bg-purple-500/10"
+                >
+                  <Shuffle className="w-4 h-4 mr-2" />
+                  Escolher Aleatório
+                </Button>
+              )}
+            </div>
           </div>
           {showAddObras && (
             <div className="border border-gray-800 rounded-lg p-4 space-y-4">
@@ -164,7 +187,8 @@ const ListaObrasModal = ({ isOpen, onClose, lista }) => {
               obras.map(obra => (
                 <div
                   key={obra.id}
-                  className="flex items-center justify-between p-4 bg-gray-800/50 rounded-lg hover:bg-gray-800 transition-colors group"
+                  className="flex items-center justify-between p-4 bg-gray-800/50 rounded-lg hover:bg-gray-800 transition-colors group cursor-pointer"
+                  onClick={() => setSelectedRandomObra(obra)}
                 >
                   <div className="flex items-center gap-4">
                     {obra.urlCapa && (
@@ -202,7 +226,9 @@ const ListaObrasModal = ({ isOpen, onClose, lista }) => {
                     </div>
                   </div>
                   <Button
-                    onClick={() => setObraToRemove(obra)}
+                    onClick={(e) => {
+                      setObraToRemove(obra);
+                    }}
                     variant="ghost"
                     size="sm"
                     className="text-red-400 hover:text-red-300 hover:bg-red-900/20 opacity-0 group-hover:opacity-100 transition-opacity"
@@ -226,6 +252,14 @@ const ListaObrasModal = ({ isOpen, onClose, lista }) => {
         confirmText="Remover"
         loading={loading}
       />
+
+      {selectedRandomObra && (
+        <ObraDetailsModal
+          isOpen={!!selectedRandomObra}
+          onClose={() => setSelectedRandomObra(null)}
+          obra={selectedRandomObra}
+        />
+      )}
     </Dialog>
   );
 };
