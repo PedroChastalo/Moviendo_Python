@@ -1,13 +1,35 @@
-import { useState } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import { Search, Film, Tv, Star, Calendar, Loader2, Plus, Check } from 'lucide-react';
-import tmdbService from '../services/tmdbService';
-import toast from 'react-hot-toast';
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import {
+  Calendar,
+  Check,
+  Film,
+  Loader2,
+  Plus,
+  Search,
+  Star,
+  Tv,
+} from "lucide-react";
+import { useState } from "react";
+import toast from "react-hot-toast";
+import tmdbService from "../services/tmdbService";
 
-const TmdbSearchModal = ({ isOpen, onClose, onSelect, onCreateGenero, onCreateDiretor, existingGeneros = [], existingDiretores = [] }) => {
-  const [query, setQuery] = useState('');
+const TmdbSearchModal = ({
+  isOpen,
+  onClose,
+  onSelect,
+  onCreateGenero,
+  onCreateDiretor,
+  existingGeneros = [],
+  existingDiretores = [],
+}) => {
+  const [query, setQuery] = useState("");
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
@@ -20,11 +42,14 @@ const TmdbSearchModal = ({ isOpen, onClose, onSelect, onCreateGenero, onCreateDi
     setLoading(true);
     try {
       const data = await tmdbService.search(query);
-      const filtered = data.results.filter(r => r.media_type === 'movie' || r.media_type === 'tv');
+      const list = Array.isArray(data) ? data : data?.results || [];
+      const filtered = list.filter(
+        (r) => r.mediaType === "movie" || r.mediaType === "tv"
+      );
       setResults(filtered);
     } catch (error) {
-      console.error('Erro ao buscar no TMDB:', error);
-      toast.error('Erro ao buscar filmes/séries');
+      console.error("Erro ao buscar no TMDB:", error);
+      toast.error("Erro ao buscar filmes/séries");
     } finally {
       setLoading(false);
     }
@@ -33,22 +58,18 @@ const TmdbSearchModal = ({ isOpen, onClose, onSelect, onCreateGenero, onCreateDi
   const handleSelectItem = async (item) => {
     setSelectedItem(item.id);
     try {
-      let details;
-      if (item.media_type === 'movie') {
-        details = await tmdbService.getMovieDetails(item.id);
-      } else {
-        details = await tmdbService.getTvDetails(item.id);
-      }
-      
+      const details = await tmdbService.getDetails(item.id, item.mediaType);
+
       setSelectedDetails({
         ...details,
-        media_type: item.media_type
+        mediaType: item.mediaType,
       });
-      setResults([]);
-      setQuery('');
     } catch (error) {
-      toast.error('Erro ao buscar detalhes');
+      console.error("Erro ao buscar detalhes:", error);
+      toast.error("Erro ao carregar detalhes da obra");
     } finally {
+      setResults([]);
+      setQuery("");
       setSelectedItem(null);
     }
   };
@@ -56,36 +77,51 @@ const TmdbSearchModal = ({ isOpen, onClose, onSelect, onCreateGenero, onCreateDi
   const handleConfirmImport = () => {
     const details = selectedDetails;
     const mappedData = {
-      titulo: details.media_type === 'movie' ? details.title : details.name,
-      sinopse: details.overview || '',
-      anoLancamento: details.media_type === 'movie' 
-        ? (details.release_date ? parseInt(details.release_date.split('-')[0]) : null)
-        : (details.first_air_date ? parseInt(details.first_air_date.split('-')[0]) : null),
-      duracaoMinutos: details.media_type === 'movie' 
-        ? details.runtime 
-        : (details.episode_run_time && details.episode_run_time.length > 0 ? details.episode_run_time[0] : null),
-      urlCapa: tmdbService.buildPosterUrl(details.poster_path, 'w500'),
-      tipo: details.media_type === 'movie' ? 'FILME' : 'SERIE',
-      notaImdb: details.vote_average ? parseFloat(details.vote_average.toFixed(1)) : null,
-      totalTemporadas: details.media_type === 'tv' ? details.number_of_seasons : null,
-      totalEpisodios: details.media_type === 'tv' ? details.number_of_episodes : null,
-      generos: details.genres?.map(g => g.name) || [],
-      diretores: details.media_type === 'movie' 
-        ? (details.credits?.crew?.filter(c => c.job === 'Director').map(d => d.name) || [])
-        : (details.created_by?.map(c => c.name) || [])
+      titulo: details.mediaType === "movie" ? details.title : details.name,
+      sinopse: details.overview || "",
+      anoLancamento:
+        details.mediaType === "movie"
+          ? details.releaseDate
+            ? parseInt(details.releaseDate.split("-")[0])
+            : null
+          : details.firstAirDate
+          ? parseInt(details.firstAirDate.split("-")[0])
+          : null,
+      duracaoMinutos:
+        details.mediaType === "movie"
+          ? details.runtime
+          : details.episodeRunTime && details.episodeRunTime.length > 0
+          ? details.episodeRunTime[0]
+          : null,
+      urlCapa: tmdbService.buildPosterUrl(details.posterPath, "w500"),
+      tipo: details.mediaType === "movie" ? "filme" : "serie",
+      notaImdb: details.voteAverage
+        ? parseFloat(details.voteAverage.toFixed(1))
+        : null,
+      totalTemporadas:
+        details.mediaType === "tv" ? details.numberOfSeasons : null,
+      totalEpisodios:
+        details.mediaType === "tv" ? details.numberOfEpisodes : null,
+      generos: details.genres?.map((g) => g.name) || [],
+      diretores:
+        details.mediaType === "movie"
+          ? details.credits?.crew
+              ?.filter((c) => c.job === "Director")
+              .map((d) => d.name) || []
+          : details.createdBy?.map((c) => c.name) || [],
     };
-    
+
     onSelect(mappedData);
     onClose();
     setSelectedDetails(null);
-    toast.success('Dados importados do TMDB!');
+    toast.success("Dados importados do TMDB!");
   };
 
   const handleCreateGenero = async (nome) => {
     try {
       await onCreateGenero(nome);
     } catch (error) {
-      toast.error('Erro ao criar gênero');
+      toast.error("Erro ao criar gênero");
     }
   };
 
@@ -93,7 +129,7 @@ const TmdbSearchModal = ({ isOpen, onClose, onSelect, onCreateGenero, onCreateDi
     try {
       await onCreateDiretor(nome);
     } catch (error) {
-      toast.error('Erro ao criar diretor');
+      toast.error("Erro ao criar diretor");
     }
   };
 
@@ -115,20 +151,27 @@ const TmdbSearchModal = ({ isOpen, onClose, onSelect, onCreateGenero, onCreateDi
             className="bg-gray-800 border-gray-700 text-white flex-1"
             autoFocus
           />
-          <Button 
-            type="submit" 
+          <Button
+            type="submit"
             disabled={loading}
             className="bg-purple-600 hover:bg-purple-700"
           >
-            {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Search className="w-4 h-4" />}
+            {loading ? (
+              <Loader2 className="w-4 h-4 animate-spin" />
+            ) : (
+              <Search className="w-4 h-4" />
+            )}
           </Button>
         </form>
 
         {selectedDetails && (
           <div className="space-y-4 bg-gray-800/50 rounded-lg p-4 border border-purple-500/30">
             <div className="flex items-start gap-4">
-              <img 
-                src={tmdbService.buildPosterUrl(selectedDetails.poster_path, 'w200')} 
+              <img
+                src={tmdbService.buildPosterUrl(
+                  selectedDetails.posterPath,
+                  "w200"
+                )}
                 alt={selectedDetails.title || selectedDetails.name}
                 className="w-24 h-36 object-cover rounded"
               />
@@ -144,18 +187,34 @@ const TmdbSearchModal = ({ isOpen, onClose, onSelect, onCreateGenero, onCreateDi
 
             <div className="space-y-3">
               <div>
-                <h4 className="text-sm font-semibold text-purple-400 mb-2">Gêneros do TMDB:</h4>
+                <h4 className="text-sm font-semibold text-purple-400 mb-2">
+                  Gêneros do TMDB:
+                </h4>
                 <div className="flex flex-wrap gap-2">
                   {selectedDetails.genres?.map((genre) => {
-                    const exists = existingGeneros.some(g => (g.nome || g.name)?.toLowerCase() === genre.name.toLowerCase());
+                    const exists = existingGeneros.some(
+                      (g) =>
+                        (g.nome || g.name)?.toLowerCase() ===
+                        genre.name.toLowerCase()
+                    );
                     return (
                       <button
                         key={genre.id}
-                        onClick={() => !exists && handleCreateGenero(genre.name)}
+                        onClick={() =>
+                          !exists && handleCreateGenero(genre.name)
+                        }
                         disabled={exists}
-                        className={`flex items-center gap-1 px-3 py-1 rounded-full text-sm transition-colors ${exists ? 'bg-green-700/30 text-green-300 cursor-not-allowed' : 'bg-gray-700 hover:bg-purple-600 text-white'}`}
+                        className={`flex items-center gap-1 px-3 py-1 rounded-full text-sm transition-colors ${
+                          exists
+                            ? "bg-green-700/30 text-green-300 cursor-not-allowed"
+                            : "bg-gray-700 hover:bg-purple-600 text-white"
+                        }`}
                       >
-                        {exists ? <Check className="w-3 h-3" /> : <Plus className="w-3 h-3" />}
+                        {exists ? (
+                          <Check className="w-3 h-3" />
+                        ) : (
+                          <Plus className="w-3 h-3" />
+                        )}
                         {genre.name}
                       </button>
                     );
@@ -163,51 +222,85 @@ const TmdbSearchModal = ({ isOpen, onClose, onSelect, onCreateGenero, onCreateDi
                 </div>
               </div>
 
-              {selectedDetails.media_type === 'movie' && selectedDetails.credits?.crew && (
-                <div>
-                  <h4 className="text-sm font-semibold text-purple-400 mb-2">Diretores do TMDB:</h4>
-                  <div className="flex flex-wrap gap-2">
-                    {selectedDetails.credits.crew
-                      .filter(c => c.job === 'Director')
-                      .map((director, idx) => {
-                        const exists = existingDiretores.some(d => (d.nome || d.name)?.toLowerCase() === director.name.toLowerCase());
+              {selectedDetails.mediaType === "movie" &&
+                selectedDetails.credits?.crew && (
+                  <div>
+                    <h4 className="text-sm font-semibold text-purple-400 mb-2">
+                      Diretores do TMDB:
+                    </h4>
+                    <div className="flex flex-wrap gap-2">
+                      {selectedDetails.credits.crew
+                        .filter((c) => c.job === "Director")
+                        .map((director, idx) => {
+                          const exists = existingDiretores.some(
+                            (d) =>
+                              (d.nome || d.name)?.toLowerCase() ===
+                              director.name.toLowerCase()
+                          );
+                          return (
+                            <button
+                              key={idx}
+                              onClick={() =>
+                                !exists && handleCreateDiretor(director.name)
+                              }
+                              disabled={exists}
+                              className={`flex items-center gap-1 px-3 py-1 rounded-full text-sm transition-colors ${
+                                exists
+                                  ? "bg-green-700/30 text-green-300 cursor-not-allowed"
+                                  : "bg-gray-700 hover:bg-purple-600 text-white"
+                              }`}
+                            >
+                              {exists ? (
+                                <Check className="w-3 h-3" />
+                              ) : (
+                                <Plus className="w-3 h-3" />
+                              )}
+                              {director.name}
+                            </button>
+                          );
+                        })}
+                    </div>
+                  </div>
+                )}
+
+              {selectedDetails.mediaType === "tv" &&
+                selectedDetails.createdBy && (
+                  <div>
+                    <h4 className="text-sm font-semibold text-purple-400 mb-2">
+                      Criadores do TMDB:
+                    </h4>
+                    <div className="flex flex-wrap gap-2">
+                      {selectedDetails.createdBy.map((creator) => {
+                        const exists = existingDiretores.some(
+                          (d) =>
+                            (d.nome || d.name)?.toLowerCase() ===
+                            creator.name.toLowerCase()
+                        );
                         return (
                           <button
-                            key={idx}
-                            onClick={() => !exists && handleCreateDiretor(director.name)}
+                            key={creator.id}
+                            onClick={() =>
+                              !exists && handleCreateDiretor(creator.name)
+                            }
                             disabled={exists}
-                            className={`flex items-center gap-1 px-3 py-1 rounded-full text-sm transition-colors ${exists ? 'bg-green-700/30 text-green-300 cursor-not-allowed' : 'bg-gray-700 hover:bg-purple-600 text-white'}`}
+                            className={`flex items-center gap-1 px-3 py-1 rounded-full text-sm transition-colors ${
+                              exists
+                                ? "bg-green-700/30 text-green-300 cursor-not-allowed"
+                                : "bg-gray-700 hover:bg-purple-600 text-white"
+                            }`}
                           >
-                            {exists ? <Check className="w-3 h-3" /> : <Plus className="w-3 h-3" />}
-                            {director.name}
+                            {exists ? (
+                              <Check className="w-3 h-3" />
+                            ) : (
+                              <Plus className="w-3 h-3" />
+                            )}
+                            {creator.name}
                           </button>
                         );
                       })}
+                    </div>
                   </div>
-                </div>
-              )}
-
-              {selectedDetails.media_type === 'tv' && selectedDetails.created_by && (
-                <div>
-                  <h4 className="text-sm font-semibold text-purple-400 mb-2">Criadores do TMDB:</h4>
-                  <div className="flex flex-wrap gap-2">
-                    {selectedDetails.created_by.map((creator) => {
-                      const exists = existingDiretores.some(d => (d.nome || d.name)?.toLowerCase() === creator.name.toLowerCase());
-                      return (
-                        <button
-                          key={creator.id}
-                          onClick={() => !exists && handleCreateDiretor(creator.name)}
-                          disabled={exists}
-                          className={`flex items-center gap-1 px-3 py-1 rounded-full text-sm transition-colors ${exists ? 'bg-green-700/30 text-green-300 cursor-not-allowed' : 'bg-gray-700 hover:bg-purple-600 text-white'}`}
-                        >
-                          {exists ? <Check className="w-3 h-3" /> : <Plus className="w-3 h-3" />}
-                          {creator.name}
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
-              )}
+                )}
             </div>
 
             <div className="flex gap-2 pt-3 border-t border-gray-700">
@@ -237,10 +330,14 @@ const TmdbSearchModal = ({ isOpen, onClose, onSelect, onCreateGenero, onCreateDi
           )}
 
           {results.map((item) => {
-            const title = item.media_type === 'movie' ? item.title : item.name;
-            const date = item.media_type === 'movie' ? item.release_date : item.first_air_date;
-            const year = date ? date.split('-')[0] : '';
-            const posterUrl = tmdbService.buildPosterUrl(item.poster_path, 'w200');
+            const title = item.mediaType === "movie" ? item.title : item.name;
+            const date =
+              item.mediaType === "movie" ? item.releaseDate : item.firstAirDate;
+            const year = date ? date.split("-")[0] : "";
+            const posterUrl = tmdbService.buildPosterUrl(
+              item.posterPath,
+              "w200"
+            );
 
             return (
               <div
@@ -250,10 +347,14 @@ const TmdbSearchModal = ({ isOpen, onClose, onSelect, onCreateGenero, onCreateDi
               >
                 <div className="w-16 h-24 bg-gray-900 rounded overflow-hidden flex-shrink-0">
                   {posterUrl ? (
-                    <img src={posterUrl} alt={title} className="w-full h-full object-cover" />
+                    <img
+                      src={posterUrl}
+                      alt={title}
+                      className="w-full h-full object-cover"
+                    />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center">
-                      {item.media_type === 'tv' ? (
+                      {item.mediaType === "tv" ? (
                         <Tv className="w-8 h-8 text-gray-600" />
                       ) : (
                         <Film className="w-8 h-8 text-gray-600" />
@@ -263,7 +364,9 @@ const TmdbSearchModal = ({ isOpen, onClose, onSelect, onCreateGenero, onCreateDi
                 </div>
 
                 <div className="flex-1 min-w-0">
-                  <h3 className="text-white font-semibold text-lg mb-1 truncate">{title}</h3>
+                  <h3 className="text-white font-semibold text-lg mb-1 truncate">
+                    {title}
+                  </h3>
                   <div className="flex items-center gap-3 text-sm text-gray-400 mb-2">
                     {year && (
                       <div className="flex items-center gap-1">
@@ -271,23 +374,29 @@ const TmdbSearchModal = ({ isOpen, onClose, onSelect, onCreateGenero, onCreateDi
                         <span>{year}</span>
                       </div>
                     )}
-                    {item.vote_averagze > 0 && (
+                    {item.voteAverage > 0 && (
                       <div className="flex items-center gap-1">
                         <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
-                        <span className="text-yellow-400 font-medium">{item.vote_average.toFixed(1)}</span>
+                        <span className="text-yellow-400 font-medium">
+                          {item.voteAverage.toFixed(1)}
+                        </span>
                       </div>
                     )}
                     <div className="flex items-center gap-1">
-                      {item.media_type === 'tv' ? (
+                      {item.mediaType === "tv" ? (
                         <Tv className="w-4 h-4 text-purple-400" />
                       ) : (
                         <Film className="w-4 h-4 text-purple-400" />
                       )}
-                      <span className="text-purple-400">{item.media_type === 'tv' ? 'Série' : 'Filme'}</span>
+                      <span className="text-purple-400">
+                        {item.mediaType === "tv" ? "Série" : "Filme"}
+                      </span>
                     </div>
                   </div>
                   {item.overview && (
-                    <p className="text-gray-400 text-sm line-clamp-2">{item.overview}</p>
+                    <p className="text-gray-400 text-sm line-clamp-2">
+                      {item.overview}
+                    </p>
                   )}
                 </div>
 

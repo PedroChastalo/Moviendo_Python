@@ -39,7 +39,14 @@ INSTALLED_APPS = [
     
     # Apps do Projeto
     'core',
-
+    'apps.diretores',
+    'apps.generos',
+    'apps.plataformas',
+    'apps.tags',
+    'apps.obras',
+    'apps.avaliacoes',
+    'apps.listas',
+    
     # Swagger para documentação da API (Opcional)
     'drf_spectacular',
 ]

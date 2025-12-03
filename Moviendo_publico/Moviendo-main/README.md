@@ -1,6 +1,6 @@
-# Moviendo
+# 🎬 Moviendo - Sistema de Gerenciamento de Filmes e Séries
 
-Sistema completo de gerenciamento de filmes e séries com Kanban, listas, avaliações e estatísticas.
+Sistema completo para catalogar, avaliar e organizar filmes e séries, com integração ao TMDB (The Movie Database).
 
 **Desenvolvido por:**  
 Pedro Vitor Chastalo Santos  
@@ -8,44 +8,48 @@ RA: 2576759
 
 ---
 
-### Pré-requisitos
+## Configuração Rápida
 
-- Java 17+
-- Node.js 18+
-- PostgreSQL 14+
-
----
-
-# back
+### Primeira vez (PC zerado)
 
 ```bash
-# Navegar para a pasta do backend
-cd back/moviendoback
+# Clone o repositório
+git clone <url-do-repositorio>
+cd Moviendo-main
 
-# Configurar banco de dados no application.properties
-# Editar: src/main/resources/application.properties
-# spring.datasource.url=jdbc:postgresql://localhost:5432/moviendo
-# spring.datasource.username=seu_usuario
-# spring.datasource.password=sua_senha
+## Pré-requisitos
 
-# Rodar a aplicação
-./mvnw spring-boot:run
+- **Python 3.8+** - [Download](https://python.org)
+- **Node.js 16+** - [Download](https://nodejs.org)
+- **PostgreSQL** - [Download](https://postgresql.org)
 
-# Ou no Windows:
-mvnw.cmd spring-boot:run
+## Comandos Manuais
+
+### Backend Django
+
+```bash
+cd back
+source venv/bin/activate
+python manage.py runserver
 ```
 
----
-
-# front
+### Frontend React
 
 ```bash
-# Navegar para a pasta do frontend
 cd front
-
-# Instalar dependências
-pnpm install
-
-# Rodar a aplicação
-pnpm run dev
+npm run dev
 ```
+
+## 🔧 Tecnologias
+
+### Backend
+
+- Django 5.2.8 + Django REST Framework
+- PostgreSQL
+- Integração TMDB API
+
+### Frontend
+
+- React 18 + Vite
+- TailwindCSS + Shadcn/UI
+- Axios para API calls
