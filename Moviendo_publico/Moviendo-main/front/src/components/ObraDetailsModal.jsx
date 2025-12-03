@@ -192,13 +192,18 @@ const ObraDetailsModal = ({
                 </div>
 
                 {(obra.generosInfo || obra.generos_info || obra.generos) &&
-                  (obra.generosInfo || obra.generos_info || obra.generos).length > 0 && (
+                  (obra.generosInfo || obra.generos_info || obra.generos)
+                    .length > 0 && (
                     <div>
                       <h4 className="text-sm font-semibold text-gray-400 mb-2">
                         Gêneros
                       </h4>
                       <div className="flex flex-wrap gap-2">
-                        {(obra.generosInfo || obra.generos_info || obra.generos).map((genero) => (
+                        {(
+                          obra.generosInfo ||
+                          obra.generos_info ||
+                          obra.generos
+                        ).map((genero) => (
                           <Badge
                             key={genero.id}
                             variant="outline"
@@ -211,23 +216,28 @@ const ObraDetailsModal = ({
                     </div>
                   )}
 
-                {(obra.diretoresInfo || obra.diretores_info || obra.diretores) &&
-                  (obra.diretoresInfo || obra.diretores_info || obra.diretores).length > 0 && (
+                {(obra.diretoresInfo ||
+                  obra.diretores_info ||
+                  obra.diretores) &&
+                  (obra.diretoresInfo || obra.diretores_info || obra.diretores)
+                    .length > 0 && (
                     <div>
                       <h4 className="text-sm font-semibold text-gray-400 mb-2">
                         Diretor(es)
                       </h4>
                       <div className="flex flex-wrap gap-2">
-                        {(obra.diretoresInfo || obra.diretores_info || obra.diretores).map(
-                          (diretor) => (
-                            <Badge
-                              key={diretor.id}
-                              className="bg-gray-800 text-gray-300"
-                            >
-                              {diretor.nome}
-                            </Badge>
-                          )
-                        )}
+                        {(
+                          obra.diretoresInfo ||
+                          obra.diretores_info ||
+                          obra.diretores
+                        ).map((diretor) => (
+                          <Badge
+                            key={diretor.id}
+                            className="bg-gray-800 text-gray-300"
+                          >
+                            {diretor.nome}
+                          </Badge>
+                        ))}
                       </div>
                     </div>
                   )}
@@ -374,11 +384,16 @@ const ObraDetailsModal = ({
                     Tags
                   </h3>
                   <div className="flex flex-wrap gap-2">
-                    {(obra.tagsInfo || obra.tags_info || obra.tags).map((tag) => (
-                      <Badge key={tag.id} className="bg-gray-800 text-gray-300">
-                        {tag.nome}
-                      </Badge>
-                    ))}
+                    {(obra.tagsInfo || obra.tags_info || obra.tags).map(
+                      (tag) => (
+                        <Badge
+                          key={tag.id}
+                          className="bg-gray-800 text-gray-300"
+                        >
+                          {tag.nome}
+                        </Badge>
+                      )
+                    )}
                   </div>
                 </div>
               )}

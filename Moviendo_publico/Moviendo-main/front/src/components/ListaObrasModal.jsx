@@ -1,19 +1,25 @@
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
-import { Film, Plus, Search, Shuffle, Tv, X } from 'lucide-react';
-import { useCallback, useEffect, useState } from 'react';
-import toast from 'react-hot-toast';
-import listasService from '../services/listasService';
-import obrasService from '../services/obrasService';
-import ConfirmModal from './ConfirmModal';
-import ObraDetailsModal from './ObraDetailsModal';
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Film, Plus, Search, Shuffle, Tv, X } from "lucide-react";
+import { useCallback, useEffect, useState } from "react";
+import toast from "react-hot-toast";
+import listasService from "../services/listasService";
+import obrasService from "../services/obrasService";
+import ConfirmModal from "./ConfirmModal";
+import ObraDetailsModal from "./ObraDetailsModal";
 
 const ListaObrasModal = ({ isOpen, onClose, lista }) => {
   const [obras, setObras] = useState([]);
   const [todasObras, setTodasObras] = useState([]);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(false);
   const [showAddObras, setShowAddObras] = useState(false);
   const [obraToRemove, setObraToRemove] = useState(null);
@@ -25,8 +31,8 @@ const ListaObrasModal = ({ isOpen, onClose, lista }) => {
       const data = await listasService.getById(lista.id);
       setObras(data.obrasInfo || []);
     } catch (error) {
-      console.error('Erro ao carregar obras da lista:', error);
-      toast.error('Erro ao carregar obras da lista');
+      console.error("Erro ao carregar obras da lista:", error);
+      toast.error("Erro ao carregar obras da lista");
     }
   }, [lista?.id]);
 
@@ -35,7 +41,7 @@ const ListaObrasModal = ({ isOpen, onClose, lista }) => {
       const data = await obrasService.getAll();
       setTodasObras(data);
     } catch (error) {
-      console.error('Erro ao carregar obras:', error);
+      console.error("Erro ao carregar obras:", error);
     }
   }, []);
 
@@ -50,11 +56,11 @@ const ListaObrasModal = ({ isOpen, onClose, lista }) => {
     setLoading(true);
     try {
       await listasService.addObra(lista.id, obraId);
-      toast.success('Obra adicionada à lista!');
+      toast.success("Obra adicionada à lista!");
       loadListaObras();
     } catch (error) {
-      console.error('Erro ao adicionar obra:', error);
-      toast.error(error.response?.data?.message || 'Erro ao adicionar obra');
+      console.error("Erro ao adicionar obra:", error);
+      toast.error(error.response?.data?.message || "Erro ao adicionar obra");
     } finally {
       setLoading(false);
     }
@@ -65,12 +71,12 @@ const ListaObrasModal = ({ isOpen, onClose, lista }) => {
     setLoading(true);
     try {
       await listasService.removeObra(lista.id, obraToRemove.id);
-      toast.success('Obra removida da lista!');
+      toast.success("Obra removida da lista!");
       loadListaObras();
       setObraToRemove(null);
     } catch (error) {
-      console.error('Erro ao remover obra:', error);
-      toast.error('Erro ao remover obra');
+      console.error("Erro ao remover obra:", error);
+      toast.error("Erro ao remover obra");
     } finally {
       setLoading(false);
     }
@@ -78,7 +84,7 @@ const ListaObrasModal = ({ isOpen, onClose, lista }) => {
 
   const handleRandomObra = () => {
     if (obras.length === 0) {
-      toast.error('Adicione obras à lista primeiro!');
+      toast.error("Adicione obras à lista primeiro!");
       return;
     }
     const randomIndex = Math.floor(Math.random() * obras.length);
@@ -86,8 +92,9 @@ const ListaObrasModal = ({ isOpen, onClose, lista }) => {
   };
 
   const obrasDisponiveis = todasObras.filter(
-    obra => !obras.some(o => o.id === obra.id) &&
-            obra.titulo.toLowerCase().includes(searchTerm.toLowerCase())
+    (obra) =>
+      !obras.some((o) => o.id === obra.id) &&
+      obra.titulo.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   if (!lista) return null;
@@ -134,7 +141,9 @@ const ListaObrasModal = ({ isOpen, onClose, lista }) => {
           {showAddObras && (
             <div className="border border-gray-800 rounded-lg p-4 space-y-4">
               <div className="flex items-center justify-between mb-2">
-                <h3 className="text-lg font-semibold text-white">Adicionar Obras</h3>
+                <h3 className="text-lg font-semibold text-white">
+                  Adicionar Obras
+                </h3>
                 <Button
                   onClick={() => setShowAddObras(false)}
                   variant="ghost"
@@ -157,19 +166,25 @@ const ListaObrasModal = ({ isOpen, onClose, lista }) => {
               <div className="max-h-64 overflow-y-auto space-y-2">
                 {obrasDisponiveis.length === 0 ? (
                   <p className="text-gray-400 text-center py-4">
-                    {searchTerm ? 'Nenhuma obra encontrada' : 'Todas as obras já estão na lista'}
+                    {searchTerm
+                      ? "Nenhuma obra encontrada"
+                      : "Todas as obras já estão na lista"}
                   </p>
                 ) : (
-                  obrasDisponiveis.map(obra => (
+                  obrasDisponiveis.map((obra) => (
                     <div
                       key={obra.id}
                       className="flex items-center justify-between p-3 bg-gray-800/50 rounded-lg hover:bg-gray-800 transition-colors"
                     >
                       <div className="flex items-center gap-3">
                         <div>
-                          <p className="text-white font-medium">{obra.titulo}</p>
+                          <p className="text-white font-medium">
+                            {obra.titulo}
+                          </p>
                           {obra.anoLancamento && (
-                            <p className="text-gray-400 text-sm">{obra.anoLancamento}</p>
+                            <p className="text-gray-400 text-sm">
+                              {obra.anoLancamento}
+                            </p>
                           )}
                         </div>
                       </div>
@@ -198,7 +213,7 @@ const ListaObrasModal = ({ isOpen, onClose, lista }) => {
                 </p>
               </div>
             ) : (
-              obras.map(obra => (
+              obras.map((obra) => (
                 <div
                   key={obra.id}
                   className="flex items-center justify-between p-4 bg-gray-800/50 rounded-lg hover:bg-gray-800 transition-colors group cursor-pointer"
@@ -214,19 +229,23 @@ const ListaObrasModal = ({ isOpen, onClose, lista }) => {
                     )}
                     <div>
                       <div className="flex items-center gap-2 mb-1">
-                        {obra.tipo === 'FILME' ? (
+                        {obra.tipo === "FILME" ? (
                           <Film className="w-4 h-4 text-purple-400" />
                         ) : (
                           <Tv className="w-4 h-4 text-purple-400" />
                         )}
-                        <h4 className="text-white font-semibold">{obra.titulo}</h4>
+                        <h4 className="text-white font-semibold">
+                          {obra.titulo}
+                        </h4>
                       </div>
                       {obra.anoLancamento && (
-                        <p className="text-gray-400 text-sm">{obra.anoLancamento}</p>
+                        <p className="text-gray-400 text-sm">
+                          {obra.anoLancamento}
+                        </p>
                       )}
                       {obra.generos && obra.generos.length > 0 && (
                         <div className="flex flex-wrap gap-1 mt-2">
-                          {obra.generos.slice(0, 3).map(genero => (
+                          {obra.generos.slice(0, 3).map((genero) => (
                             <Badge
                               key={genero.id}
                               variant="outline"

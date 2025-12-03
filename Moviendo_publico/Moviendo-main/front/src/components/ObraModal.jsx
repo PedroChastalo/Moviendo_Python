@@ -116,12 +116,21 @@ const ObraModal = ({ isOpen, onClose, obra = null, onSuccess }) => {
       totalEpisodios: obraData.totalEpisodios || "",
       dataAssistido: obraData.dataAssistido || "",
     });
-    
-    const generos = obraData.generosInfo || obraData.generos_info || obraData.generos || [];
-    const plataformas = obraData.plataformasInfo || obraData.plataformas_info || obraData.plataformas || [];
+
+    const generos =
+      obraData.generosInfo || obraData.generos_info || obraData.generos || [];
+    const plataformas =
+      obraData.plataformasInfo ||
+      obraData.plataformas_info ||
+      obraData.plataformas ||
+      [];
     const tags = obraData.tagsInfo || obraData.tags_info || obraData.tags || [];
-    const diretores = obraData.diretoresInfo || obraData.diretores_info || obraData.diretores || [];
-    
+    const diretores =
+      obraData.diretoresInfo ||
+      obraData.diretores_info ||
+      obraData.diretores ||
+      [];
+
     setSelectedGeneros(generos.map((g) => g.id));
     setSelectedPlataformas(plataformas.map((p) => p.id));
     setSelectedTags(tags.map((t) => t.id));
@@ -356,7 +365,7 @@ const ObraModal = ({ isOpen, onClose, obra = null, onSuccess }) => {
             <div className="grid grid-cols-2 gap-4">
               <div className="col-span-2">
                 <Label htmlFor="titulo" className="text-white">
-                  Título 
+                  Título
                 </Label>
                 <Input
                   id="titulo"
@@ -372,7 +381,7 @@ const ObraModal = ({ isOpen, onClose, obra = null, onSuccess }) => {
 
               <div>
                 <Label htmlFor="tipo" className="text-white">
-                  Tipo 
+                  Tipo
                 </Label>
                 <Select
                   value={formData.tipo}
@@ -402,7 +411,7 @@ const ObraModal = ({ isOpen, onClose, obra = null, onSuccess }) => {
 
               <div>
                 <Label htmlFor="status" className="text-white">
-                  Status 
+                  Status
                 </Label>
                 <Select
                   value={formData.status}
